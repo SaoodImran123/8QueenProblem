@@ -13,6 +13,11 @@ def fitness_func(genome,genome_id):
         for y in range(x+1,len(genome)):
             if y-x == abs(genome[x] - genome[y]):
                 col -=1
+                break
+    if col == 100:
+        if (genome.tolist() in total_sols) == False:
+            total_sols.append(genome.tolist())
+            print("Total unique solutions found: " + str(len(total_sols)))
     return col
 def mutation_func(genome, ga_inst):
     choices = [0,1,2,3,4,5,6,7]
@@ -24,7 +29,7 @@ def mutation_func(genome, ga_inst):
 
 
 def populationMaker():
-    population_size = 92
+    population_size = 500
     population = []
     for pop in range(0,population_size):
         genome = numpy.random.choice(numpy.arange(0,8),replace=False,size=8)
@@ -66,17 +71,16 @@ def main():
     start = time.time()
     while len(total_sols) != 92:
         genome = populationMaker()
-        ga_obj = pygad.GA(num_generations=5,
+        ga_obj = pygad.GA(num_generations=50,
                 num_parents_mating=50, 
                 fitness_func=fitness_func, 
                 initial_population=genome,
                 crossover_type=crossover_func,
                 mutation_type=mutation_func,
                 parent_selection_type="rank",
-                stop_criteria=["saturate_10"],
-                on_generation=check_fitness,
+                stop_criteria=["saturate_5"],
                 gene_type=int,
-                mutation_percent_genes=0.02)
+                mutation_percent_genes=0.05)
         ga_obj.run()
         solution, solution_fitness, solution_idx = ga_obj.best_solution()
         ga_obj.best_solutions
