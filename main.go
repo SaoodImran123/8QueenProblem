@@ -9,6 +9,9 @@ import (
 // QUEEN_COUNT Number of queens on the board
 const QUEEN_COUNT = 8
 
+// Number of solutions for a given board size
+const SOLUTION_COUNT = 92
+
 // Number of mutation to apply
 const MUTATION_COUNT = 1
 
@@ -55,9 +58,10 @@ func GenerateBoard(rng *rand.Rand) eaopt.Genome {
 }
 
 func main() {
+	//GA Settings
 	var conf = eaopt.NewDefaultGAConfig()
-	conf.PopSize = 100
-	conf.NGenerations = 10000
+	conf.PopSize = 1000
+	conf.NGenerations = 10e10
 	conf.ParallelEval = false
 	var ga, err = conf.NewGA()
 	if err != nil {
@@ -65,13 +69,13 @@ func main() {
 		return
 	}
 
+	//Save solutions
 	var solutions [][]int
 	ga.Callback = func(ga *eaopt.GA) {
 		for i := 0; i < len(ga.Populations[0].Individuals); i++ {
 			if ga.Populations[0].Individuals[i].Fitness == 0 {
 				if ga.Populations[0].Individuals[i].Evaluated == true {
-					var solution []int = getGnome(ga.Populations[0].Individuals[i].Genome)
-					//var solution []int = ga.Populations[0].Individuals[i].Genome.(Positions)
+					var solution []int = ga.Populations[0].Individuals[i].Genome.(Positions)
 					if MyEval(solution) == 0 { //For some reason fitness zero above does not always work
 						if UniqueSlice(solution, solutions) {
 							solutions = append(solutions, solution)
@@ -81,14 +85,15 @@ func main() {
 
 			}
 		}
-		//fmt.Println(solutions)
+
+		//Print stats every generation
 		fmt.Println("Solution Count: ", len(solutions), " Generation: ", ga.Generations)
 		fmt.Println("\n~~~~~~~~~~~~~NEW GENERATION~~~~~~~~~~~~~~~\n")
 	}
 
 	// Stop early if all solutions are found
 	ga.EarlyStop = func(ga *eaopt.GA) bool {
-		if len(solutions) == 92 {
+		if len(solutions) == SOLUTION_COUNT {
 			fmt.Printf("\nFound all solutions after %d generations in %s\n\n", ga.Generations, ga.Age)
 			return true
 		}
@@ -103,6 +108,6 @@ func main() {
 	}
 
 	// Display result
-	print2D(solutions)
+	Print2D(solutions)
 
 }

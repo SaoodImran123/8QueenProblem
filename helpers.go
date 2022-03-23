@@ -1,12 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/MaxHalford/eaopt"
-	"regexp"
 	"strconv"
-	"strings"
 )
 
 func IntegerAbs(n int) int {
@@ -18,14 +14,14 @@ func IntegerAbs(n int) int {
 
 func UniqueSlice(item []int, list [][]int) bool {
 	for i := 0; i < len(list); i++ {
-		if sliceEqual(item, list[i]) {
+		if SliceEqual(item, list[i]) {
 			return false
 		}
 	}
 	return true
 }
 
-func sliceEqual(a []int, b []int) bool {
+func SliceEqual(a []int, b []int) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -39,26 +35,7 @@ func sliceEqual(a []int, b []int) bool {
 	return true
 }
 
-func getGnome(a eaopt.Genome) Positions {
-	b, err := json.Marshal(a)
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	var GenomeStr = string(b)
-	re, _ := regexp.Compile(`(?m)\[|\]`)
-	GenomeStr = re.ReplaceAllString(GenomeStr, "")
-	GenomeStrSlice := strings.Split(GenomeStr, ",")
-
-	var genome = make(Positions, QUEEN_COUNT)
-	for i, s := range GenomeStrSlice {
-		genome[i], _ = strconv.Atoi(s)
-	}
-
-	return genome
-}
-
-func print2D(arr [][]int) {
+func Print2D(arr [][]int) {
 	for i := 0; i < len(arr); i++ {
 		line := ""
 		for j := 0; j < len(arr[i]); j++ {
@@ -66,22 +43,6 @@ func print2D(arr [][]int) {
 		}
 		fmt.Println(line)
 	}
-}
-
-func format1D(arr []int) string {
-	line := ""
-	for j := 0; j < len(arr); j++ {
-		line += strconv.Itoa(arr[j]) + " "
-	}
-	return line
-}
-
-func format1DFloat64(arr []float64) string {
-	line := ""
-	for j := 0; j < len(arr); j++ {
-		line += strconv.Itoa(int(arr[j])) + " "
-	}
-	return line
 }
 
 func MyEval(P []int) float64 {
